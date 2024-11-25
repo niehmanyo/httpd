@@ -1,0 +1,4 @@
+# ninja log v5
+1	389	7541365491335840	CMakeFiles/project1.dir/main.c.obj	360eef4f4889a838
+34	389	7541365491335666	CMakeFiles/project1.dir/test1.c.obj	57af95b6e6281173
+266	388	7541351373517690	project1.exe	d9dcffd98245f5c1
