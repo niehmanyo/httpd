@@ -4,7 +4,10 @@
 
 
 #include <iostream>
-#include "stdlib.h"
+#include <stdio.h>
+
+#include <winsock2.h>
+#pragma comment(lib,"WS2_32.lib")
 
 using namespace std;
 
@@ -16,9 +19,37 @@ using namespace std;
  * *port表示端口，如果port的值是0，那么会自动分配一个可用的端口
  * 端口统一是 unsigned short 类型
  */
-
+void error_die(const char* str){
+    perror(str);
+    exit(1);
+}
 
 int startup(unsigned short *port){
+    // 1. 网络通信的初始化
+    WSADATA data;
+    int ret = WSAStartup(
+            MAKEWORD(1,1), // 1.1 版本协议
+            &data
+            );
+
+    if(ret){
+        // ret != 0
+        error_die("WASStartup")
+    }
+    int server_socket = socket(PF_INET, // 套接字类型
+           SOCK_STREAM, // 数据流
+           IPPROTO_TCP);
+    if(server_socket == -1){
+        //打印错误提示，并结束程序
+        error_die("socket");
+    }
+
+    // 设置端口可复用
+    int opt = 1;
+    ret = setsockopt(server_socket,SOL_SOCKET,SO_REUSEADDR,(const char*)&opt,sizeof(opt));
+    if(ret == -1){
+        error_die("setsockopt");
+    }
 
     return 0;
 }
