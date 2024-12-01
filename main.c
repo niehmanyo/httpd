@@ -15,6 +15,11 @@ void printArrAddress(int arr[]){
     printf("%zu\n", sizeof(arr));
 }
 
+void method(){
+    printf("Hello method");
+}
+
+
 int findIntMaxArr(int arr[],int len){
     if(len <= 0){
         return -1;
@@ -52,7 +57,8 @@ int main() {
 //    printArrAddress(arr);
 //    printf("%d\n", findIntMaxArr(arr,5));
 
-
+    void (*mt_ptr) () = method;
+    mt_ptr();
     printPtrInfo();
 
 //    printf("%s\n",str);

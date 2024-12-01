@@ -5,6 +5,31 @@
 #include "stdlib.h"
 #include "stdio.h"
 
+typedef struct cat{
+    int age;
+    char name[2];
+
+} cat;
+
+void method(){
+    printf("Hello method\n");
+}
+
+int add( int p1, int p2){
+    return p1+p2;
+}
+
+int sub( int p1, int p2){
+    return p1-p2;
+}
+
+int multi( int p1, int p2){
+    return p1*p2;
+}
+
+int divide( int p1, int p2){
+    return p1/p2;
+}
 int main(){
     int arr[]  = {1,23,3,4,5,'\0'};
     int* ptr1 = arr;
@@ -50,5 +75,22 @@ int main(){
     int(*xyy) [5] = &arr;
     printf("%d\n",*arr);
     printf("%p\n",&arr);
+
+    void (*mPtr)() = method;
+    mPtr();
+
+    int (*addPtr)(int,int ) = add;
+    printf("%d\n",addPtr(1,2));
+
+    int (*methodPtrs[4])(int,int) = { add, sub, multi, divide};
+    printf("%d\n",methodPtrs[1](1,2));
+
+    cat c1;
+    c1.name[0] = '1';
+    c1.age = 1;
+
+    printf("size = %llu\n", sizeof(cat));
     return 0;
+
+
 }

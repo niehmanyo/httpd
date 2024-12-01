@@ -7,7 +7,7 @@
 #include <stdio.h>
 
 #include <winsock2.h>
-#pragma comment(lib,"WS2_32.lib")
+#pragma comment(lib,"Ws2_32.lib")
 
 using namespace std;
 
@@ -34,7 +34,7 @@ int startup(unsigned short *port){
 
     if(ret){
         // ret != 0
-        error_die("WASStartup")
+        error_die("WASStartup");
     }
     int server_socket = socket(PF_INET, // 套接字类型
            SOCK_STREAM, // 数据流
@@ -51,7 +51,39 @@ int startup(unsigned short *port){
         error_die("setsockopt");
     }
 
-    return 0;
+    // 配置服务器端的网络地址
+    struct sockaddr_in server_addr{};
+    memset(&server_addr,0, sizeof(server_addr));
+    server_addr.sin_family = AF_INET;
+    server_addr.sin_port = htons(*port);
+    server_addr.sin_addr.s_addr = INADDR_ANY;
+
+    // 绑定套接字
+    if(bind(server_socket,
+            (struct sockaddr*)&server_addr,
+                    sizeof(server_addr)) < 0){
+        error_die("bind");
+    };
+
+    // 动态分配一个端口
+    int nameLen = sizeof(server_addr);
+    if(*port == 0){
+        if(getsockname(server_socket,
+                    (struct sockaddr*) &server_addr,
+                            &nameLen) < 0){
+            error_die("getsockname");
+        }
+    }
+    // 上面分配了端口，会保存到server_addr 结构体中
+    *port = server_addr.sin_port;
+
+
+    // 创建监听队列
+    if(listen(server_socket,5) < 0){
+        error_die("listen");
+    }
+
+    return server_socket;
 }
 int main(){
     unsigned short port = 80;
@@ -60,5 +92,7 @@ int main(){
 
 
     //todo
+
+    system("pause");
     return 0;
 }
