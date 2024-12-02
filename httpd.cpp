@@ -8,6 +8,7 @@
 
 #include <winsock2.h>
 #pragma comment(lib,"Ws2_32.lib")
+#define ALWAYS true
 
 using namespace std;
 
@@ -85,14 +86,50 @@ int startup(unsigned short *port){
 
     return server_socket;
 }
+
+// #define DWORD __LONG32
+// #define __LONG32 long
+// 处理用户请求的线程函数
+DWORD WINAPI accept_request(LPVOID arg){
+
+    return 0;
+}
+
 int main(){
     unsigned short port = 80;
     int server_socket = startup(&port);
-    printf("httpd server is starting,listening port: %d ... \n",port);
+    printf("httpd server is starting,listening port: %u ... \n",port);
 
 
     //todo
+    /*
+     * 作为一个服务器，应该无时无刻都在监听端口
+     * 所以这里要用一个while(1)
+     * */
 
-    system("pause");
+    struct sockaddr_in client_addr{};
+    int client_addr_len = sizeof(client_addr);
+    while(ALWAYS){
+        // 阻塞式等待用户通过浏览器发起访问
+        // 这个是在接待请求，如果有请求接待，则生成新的套接字
+        int client_socket = accept(server_socket,
+               (struct sockaddr*) &client_addr,
+                      &client_addr_len );
+
+        if(client_socket == -1){
+            // 创建失败
+            error_die("accept");
+        }
+
+        // 使用client_socket对用户进行访问
+        // 创建一个新的线程()
+        DWORD threadId;
+        CreateThread(0,
+                     0,
+                     accept_request,
+                     (void*) client_socket,
+                     0,
+                     &threadId);
+    }
     return 0;
 }
